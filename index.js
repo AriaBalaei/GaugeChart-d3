@@ -6,20 +6,11 @@ const svg = canvas.append('svg')
 
 const margin =
   {
-    top: 20,
+    top: 0,
     right: 60,
     bottom: 20,
     left: 60
   };
-
-const pie = d3.pie()
-         .sort(null)
-         .value(data => data)   
-  
-
-const arcPath = d3.arc()
-        .outerRadius(200)
-        .innerRadius(100)
 
 const graphWidth = window.innerWidth - margin.left - margin.right;
 const graphHeight = window.innerHeight - margin.top - margin.bottom;
@@ -27,9 +18,29 @@ const graphHeight = window.innerHeight - margin.top - margin.bottom;
 const mainCanvas = svg.append('g')
                 .attr('height', graphHeight /2)
                 .attr('width', graphWidth / 2)
-                .attr('transform',`translate(${margin.left + graphWidth/2},${margin.top + graphHeight/2})`);
+                .attr('transform',`translate(${margin.left + graphWidth/10 },${margin.top + graphHeight/3})`);
 
+const arcAngle = d3.arc()
+            .innerRadius( graphWidth/10)
+            .outerRadius( graphWidth/10 + graphHeight/20)
+            .startAngle(Math.PI/3)     
+            .endAngle(-Math.PI/3)   
 
+var Ax = 0 , Ay = 0
+
+function alignTranslation(i) { 
+  let Ax = i*graphWidth/5 
+  if(i % 2){
+    Ax = (i-1)*graphWidth/5
+    Ay = graphHeight/2}
+  else
+    Ay = 0
+    
+		return 'translate('+ Ax +','+ Ay +')';
+	}
+
+var myColor = d3.scaleLinear().domain([1,10])
+                .range(["red", "green"])
 
 function getCSVData() {
   d3.csv('/data.csv', function(d){
@@ -38,7 +49,6 @@ function getCSVData() {
 
   getCSVData();
 
-const solidPie = {}
 function drawChart(data){
   const arrayOfRate = data.map(d => parseFloat(d.IMDB_Rating))
   console.log(arrayOfRate)
@@ -46,19 +56,23 @@ function drawChart(data){
   const max = d3.max(arrayOfRate)
   console.log(min ,max)
 
-  const angles = pie();
   
-  //create path and pie on screen
-  const paths = mainCanvas.selectAll('path')
-                          .data(angles)
+  var alignTx = alignTranslation();
 
-  paths.enter()
-        .append('path')
-        .attr('class', 'arc')
-        .attr('stroke', '#cde')
-        .attr('fill', 'black')
-        .attr('d', arcPath)
 
-  
+  const pathsgraph = mainCanvas.selectAll('g')
+      .data(data)
+      .enter()
+      .append('g')
+
+// console.log(alignTx)
+ 
+  const paths = pathsgraph
+           .append('path')
+           .attr('transform', (d, i) => alignTranslation(i))
+           .attr('d', arcAngle)
+           .attr('stroke', 'gray')
+           .attr('fill', (d, i) => myColor());
+
 
 }
