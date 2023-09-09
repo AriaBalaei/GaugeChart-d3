@@ -107,7 +107,7 @@ function drawChart(data){
     .attr('fill','gray')
     .attr('font-size','2.5vh')
     .attr('x',function (d, i) {
-      if(i % 2){
+      if(i % 2 != 0){
         return (i-1)*graphWidth/5
       }
       return i*graphWidth/5 
