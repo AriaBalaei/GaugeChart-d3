@@ -98,4 +98,23 @@ function drawChart(data){
            .attr('fill', 'green');
 
   //The Arows
+
+  //Text-title
+  var titleText = pathsgraph
+    .append('text') 
+    .html(d => d.Tv_Series)
+    .attr('text-anchor','middle')
+    .attr('fill','gray')
+    .attr('font-size','2vh')
+    .attr('x',function (d, i) {
+      if(i % 2){
+        return (i-1)*graphWidth/5
+      }
+      return i*graphWidth/5 
+    })
+    .attr('y',function (d, i)  {
+    if(i % 2){
+        return  graphHeight/2 }
+      })
+  //Text-amount
 }
