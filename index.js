@@ -3,7 +3,7 @@ const canvas = d3.select('.canva')
 const svg = canvas.append('svg')
                   .attr('width', window.innerWidth)
                   .attr('height', window.innerHeight)
-
+//Margin
 const margin =
   {
     top: 0,
@@ -20,14 +20,28 @@ const mainCanvas = svg.append('g')
                 .attr('width', graphWidth / 2)
                 .attr('transform',`translate(${margin.left + graphWidth/10 },${margin.top + graphHeight/3})`);
 
-const arcAngle = d3.arc()
+//Set Colors                
+const redArcAngle = d3.arc()
+            .innerRadius( graphWidth/10)
+            .outerRadius( graphWidth/10 + graphHeight/20)
+            .startAngle(-Math.PI/8)     
+            .endAngle(-Math.PI/3)   
+
+const yellowArcAngle = d3.arc()
+            .innerRadius( graphWidth/10)
+            .outerRadius( graphWidth/10 + graphHeight/20)
+            .startAngle(Math.PI/8)     
+            .endAngle(-Math.PI/8) 
+
+const greenArcAngle = d3.arc()
             .innerRadius( graphWidth/10)
             .outerRadius( graphWidth/10 + graphHeight/20)
             .startAngle(Math.PI/3)     
-            .endAngle(-Math.PI/3)   
+            .endAngle(Math.PI/8) 
 
+
+//Placement of Gauges            
 var Ax = 0 , Ay = 0
-
 function alignTranslation(i) { 
   let Ax = i*graphWidth/5 
   if(i % 2){
@@ -39,9 +53,7 @@ function alignTranslation(i) {
 		return 'translate('+ Ax +','+ Ay +')';
 	}
 
-var myColor = d3.scaleLinear().domain([1,10])
-                .range(["red", "green"])
-
+//CSV Data                
 function getCSVData() {
   d3.csv('/data.csv', function(d){
     return d;
@@ -50,29 +62,40 @@ function getCSVData() {
   getCSVData();
 
 function drawChart(data){
+  //Data
   const arrayOfRate = data.map(d => parseFloat(d.IMDB_Rating))
   console.log(arrayOfRate)
   const min = d3.min(arrayOfRate)
   const max = d3.max(arrayOfRate)
   console.log(min ,max)
 
-  
-  var alignTx = alignTranslation();
-
-
+  //Paths Graph
   const pathsgraph = mainCanvas.selectAll('g')
       .data(data)
       .enter()
       .append('g')
 
-// console.log(alignTx)
- 
-  const paths = pathsgraph
+  //The Gauges
+  const redPaths = pathsgraph
            .append('path')
            .attr('transform', (d, i) => alignTranslation(i))
-           .attr('d', arcAngle)
+           .attr('d', redArcAngle)
            .attr('stroke', 'gray')
-           .attr('fill', (d, i) => myColor());
+           .attr('fill', 'red');
 
+  const yellowPaths = pathsgraph
+           .append('path')
+           .attr('transform', (d, i) => alignTranslation(i))
+           .attr('d', yellowArcAngle)
+           .attr('stroke', 'gray')
+           .attr('fill', 'yellow');
 
+  const greenPaths = pathsgraph
+           .append('path')
+           .attr('transform', (d, i) => alignTranslation(i))
+           .attr('d', greenArcAngle)
+           .attr('stroke', 'gray')
+           .attr('fill', 'green');
+
+  //The Arows
 }
