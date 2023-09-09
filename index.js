@@ -20,7 +20,7 @@ const mainCanvas = svg.append('g')
                 .attr('width', graphWidth / 2)
                 .attr('transform',`translate(${margin.left + graphWidth/10 },${margin.top + graphHeight/3})`);
 
-//Set Colors                
+// Set Arcs              
 const redArcAngle = d3.arc()
             .innerRadius( graphWidth/10)
             .outerRadius( graphWidth/10 + graphHeight/20)
@@ -44,7 +44,7 @@ const greenArcAngle = d3.arc()
 var Ax = 0 , Ay = 0
 function alignTranslation(i) { 
   let Ax = i*graphWidth/5 
-  if(i % 2){
+  if(i % 2 != 0){
     Ax = (i-1)*graphWidth/5
     Ay = graphHeight/2}
   else
@@ -105,7 +105,7 @@ function drawChart(data){
     .html(d => d.Tv_Series)
     .attr('text-anchor','middle')
     .attr('fill','gray')
-    .attr('font-size','2vh')
+    .attr('font-size','2.5vh')
     .attr('x',function (d, i) {
       if(i % 2){
         return (i-1)*graphWidth/5
@@ -113,8 +113,9 @@ function drawChart(data){
       return i*graphWidth/5 
     })
     .attr('y',function (d, i)  {
-    if(i % 2){
-        return  graphHeight/2 }
-      })
+    if(i % 2 != 0){
+        return  graphHeight/2 + graphWidth/16}
+    else return 0 + graphWidth/16
+          })
   //Text-amount
 }
