@@ -12,6 +12,7 @@ const margin =
     left: 60
   };
 
+
 const graphWidth = window.innerWidth - margin.left - margin.right;
 const graphHeight = window.innerHeight - margin.top - margin.bottom;
 
@@ -19,6 +20,12 @@ const mainCanvas = svg.append('g')
                 .attr('height', graphHeight /2)
                 .attr('width', graphWidth / 2)
                 .attr('transform',`translate(${margin.left + graphWidth/10 },${margin.top + graphHeight/3})`);
+// Tool Tip
+var tooltip = d3.select("body")
+.append("div")
+ .style("position", "absolute")
+ .style("z-index", "10")
+ .style("visibility", "hidden")
 
 // Set Arcs              
 const redArcAngle = d3.arc()
@@ -40,7 +47,7 @@ const greenArcAngle = d3.arc()
             .endAngle(Math.PI/8) 
 
 
-//Placement of Gauges            
+//Placment of Gauges            
 var Ax = 0 , Ay = 0
 function alignTranslation(i) { 
   let Ax = i*graphWidth/5 
@@ -52,7 +59,21 @@ function alignTranslation(i) {
     
 		return 'translate('+ Ax +','+ Ay +')';
 	}
-
+//X placment
+function xplacement(i)
+{
+  if(i % 2 != 0){
+    return (i-1)*graphWidth/5
+  }
+  return i*graphWidth/5 
+}
+//Y placement
+function yplacement(i)
+{
+  if(i % 2 != 0){
+    return  graphHeight/2 + graphWidth/16}
+else return 0 + graphWidth/16
+}
 //CSV Data                
 function getCSVData() {
   d3.csv('/data.csv', function(d){
@@ -97,8 +118,17 @@ function drawChart(data){
            .attr('stroke', 'gray')
            .attr('fill', 'green');
 
-  //The Arows
-
+  //The Arrows
+  const arrow = pathsgraph
+        .append('rect')
+        .attr('width', graphWidth/256)
+        .attr('height', graphWidth/8)
+        .attr('x', (d, i) => xplacement(i))
+        .attr('y', (d, i) => yplacement(i))
+        .attr('fill', 'black')
+        .attr("transform", function(d, i){
+          return `rotate(${(220*d.IMDB_Rating/(Math.round(max)+1))} ${xplacement(i)} ${yplacement(i)-graphHeight/128})`
+        })
   //Text-title
   var titleText = pathsgraph
     .append('text') 
@@ -106,16 +136,35 @@ function drawChart(data){
     .attr('text-anchor','middle')
     .attr('fill','gray')
     .attr('font-size','2.5vh')
-    .attr('x',function (d, i) {
-      if(i % 2 != 0){
-        return (i-1)*graphWidth/5
-      }
-      return i*graphWidth/5 
-    })
-    .attr('y',function (d, i)  {
-    if(i % 2 != 0){
-        return  graphHeight/2 + graphWidth/16}
-    else return 0 + graphWidth/16
-          })
-  //Text-amount
+    .attr('x', (d, i) => xplacement(i))
+    .attr('y', (d, i) => yplacement(i) + graphWidth/64)
+  //Tool Tip
+  pathsgraph
+  .on("mouseover", function(event){
+    console.log(event)
+    console.log(event)
+    d3.select(this)
+       .transition()
+       .duration(100)
+       .style('opacity', '0.7')
+    tooltip.html( d => {return '<p>Tv Series: ' + '<span style="color:orange"></span>' + event.target.__data__.Tv_Series + '</p>' + 
+    '<p>  IMDB Rate: ' + '<span style="color:orangered"></span>' + event.target.__data__.IMDB_Rating + '</p>' 
+
+  })
+    tooltip.style("visibility", "visible")
+    tooltip.style('opacity', '0.9')
+   
+    tooltip.style('color', 'black')
+    tooltip.attr('class', 'tooltip')
+
+  })
+  .on("mouseout", function(event){
+    d3.select(this)
+    .transition()
+    .duration(100)
+    .style('opacity', '1')
+    tooltip.style("visibility", "hidden");
+  })
+  .on("mousemove", function(event){ tooltip.style("top", (event.pageY + 10)+"px").style("left",(event.pageX+25)+"px");})
+  
 }
