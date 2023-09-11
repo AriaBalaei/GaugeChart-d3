@@ -127,7 +127,7 @@ function drawChart(data){
         .attr('y', (d, i) => yplacement(i))
         .attr('fill', 'black')
         .attr("transform", function(d, i){
-          return `rotate(${(220*d.IMDB_Rating/(Math.round(max)+1))} ${xplacement(i)} ${yplacement(i)-graphHeight/128})`
+          return `rotate(${(140 + 80*d.IMDB_Rating/(10))} ${xplacement(i)} ${yplacement(i)-graphHeight/128})`
         })
   //Text-title
   var titleText = pathsgraph
