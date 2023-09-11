@@ -1,6 +1,7 @@
 # GaugeChart-d3
 
-![image](https://github.com/AriaBalaei/GaugeChart-d3/assets/141871802/c9fe042b-220a-4641-9a93-6c68e60e041d)
+![image](https://github.com/AriaBalaei/GaugeChart-d3/assets/141871802/989c7154-9529-4db2-bc29-3cdb95d7d06e)
+
 
 ## How to run
 
